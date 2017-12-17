@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Armoured Aces</title>
+</head>
+
+<body>
+  <div id ="start-page">
+    <h1> Armoured Aces </h1>
+    <div class="input-group">
+        <input id="tank-name" type="text" class="form-control" placeholder="Name your tank" autocomplete="off">
+        <span class="input-group-btn">
+          <input id="join" class="btn btn-primary" type="submit" value="Join the battle">
+        </span>
+      </div>
+      <div class="tank-select col-md-12">
+        <label>Choose your tank:</label>
+          <ul class="tank-selection">
+            <li class="selected" data-tank="1">
+              <img src="img/preview-tank-1.png">
+            </li>
+            <li data-tank="2">
+              <img src="img/preview-tank-2.png">
+            </li>
+            <li data-tank="3">
+              <img src="img/preview-tank-3.png">
+            </li>
+          </ul>
+      </div>
+  </div>
+
+  <div id="arena" class="arena">
+  </div>
+
+</body>
+</html>
