@@ -43,8 +43,8 @@ GameArena.prototype.synctank = function(tank){
 		if(t.id == tank.id){
 			t.x = tank.x;
 			t.y = tank.y;
-			t.canonangle = tank.canonangle;
-			t.baseangle = tank.baseangle;
+			t.canonAngle = tank.canonAngle;
+			t.baseAngle = tank.baseAngle;
 		}
 	})
 }
