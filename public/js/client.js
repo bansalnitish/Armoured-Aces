@@ -132,6 +132,8 @@ function Tank(tank, arena, game){
 	this.isLocal = tank..isLocal;
 	this.dead = false;
 	this.health = tank.health;
+	this.mx = null;
+	this.my = null;
 
 	this. dir = {
 		left : false,
@@ -142,6 +144,40 @@ function Tank(tank, arena, game){
 	
 
 }
+
+Tank.prototype = {
+
+	setCannonAngle: function(){
+		var tank = { x: this.x , y: this.y};
+		var deltaX = this.mx - tank.x;
+		var deltaY = this.my - tank.y;
+		this.cannonAngle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+		this.cannonAngle += 90;
+	},
+
+	shoot: function(){
+		if(this.dead){
+			return;
+		}
+
+		//Emit ball to server
+		var serverBall = {};
+		//Just for local balls who have owner
+		serverBall.alpha = this.cannonAngle * Math.PI / 180; //angle of shot in radians
+		//Set init position
+		var cannonLength = 60;
+		var deltaX = cannonLength * Math.sin(serverBall.alpha);
+		var deltaY = cannonLength * Math.cos(serverBall.alpha);
+
+		serverBall.ownerId = this.id;
+		serverBall.x = this.x + deltaX - 5;
+		serverBall.y = this.y - deltaY - 5;
+
+		this.game.socket.emit('shoot', serverBall);
+	}
+
+}
+
 
 $(document).ready(function(){
 
