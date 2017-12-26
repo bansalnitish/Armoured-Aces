@@ -142,10 +142,14 @@ function Tank(tank, arena, game){
 		down : false,
 	};
 	
-
+	this.intialise();
 }
 
 Tank.prototype = {
+
+	intialise: function(){
+		this.$arena.append('div id ="'+this.id + '" class = "tank tank'+this.id+'"</div>')
+	},
 
 	setCannonAngle: function(){
 		var tank = { x: this.x , y: this.y};
@@ -155,6 +159,54 @@ Tank.prototype = {
 		this.cannonAngle += 90;
 	},
 
+	setControls: function(){
+		var t = this;
+
+		/* Detect both keypress and keyup to allow multiple keys
+		 and combined directions */
+		$(document).keypress( function(e){
+			var k = e.keyCode || e.which;
+			switch(k){
+				case 119: //W
+					t.dir.up = true;
+					break;
+				case 100: //D
+					t.dir.right = true;
+					break;
+				case 115: //S
+					t.dir.down = true;
+					break;
+				case 97: //A
+					t.dir.left = true;
+					break;
+			}
+
+		}).keyup( function(e){
+			var k = e.keyCode || e.which;
+			switch(k){
+				case 87: //W
+					t.dir.up = false;
+					break;
+				case 68: //D
+					t.dir.right = false;
+					break;
+				case 83: //S
+					t.dir.down = false;
+					break;
+				case 65: //A
+					t.dir.left = false;
+					break;
+			}
+		}).mousemove( function(e){ //Detect mouse for aiming
+			t.mx = e.pageX - t.$arena.offset().left;
+			t.my = e.pageY - t.$arena.offset().top;
+			t.setCannonAngle();
+		}).click( function(){
+			t.shoot();
+		});
+
+	},
+	
 	shoot: function(){
 		if(this.dead){
 			return;
