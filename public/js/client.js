@@ -148,7 +148,46 @@ function Tank(tank, arena, game){
 Tank.prototype = {
 
 	intialise: function(){
-		this.$arena.append('div id ="'+this.id + '" class = "tank tank'+this.id+'"</div>')
+		this.$arena.append('<div id ="' + this.id + '" class = "tank tank'+this.id+'"></div>');
+		this.$tank = $("#" + this.id);
+		this.$tank.css("height", 60);
+		this.$tank.css("width", 60);
+
+		this.$tank.append('<div id = "canon-' + this.id + '"class = "tank-canon"></div>');
+		this.$canon = $("#cannon-" + this.id);
+
+		this.$tank.css('-webkit-transform', 'rotateZ(' + this.baseAngle + 'deg)');
+		this.$tank.css('-moz-transform', 'rotateZ(' + this.baseAngle + 'deg)');
+		this.$tank.css('-o-transform', 'rotateZ(' + this.baseAngle + 'deg)');
+		this.$tank.css('transform', 'rotateZ(' + this.baseAngle + 'deg)');
+
+		this.$arena.append('<div id ="info-' + this.id + '"class = "info"></div>');
+		this.$info = $("#info-" + this.id);
+		this.$info.append('<div id ="label">' + this.name + '</div>');
+
+		this.refresh();
+
+	},
+
+	refresh: function(){
+		this.$tank.css("left", (this.x)+"px");
+		this.$tank.css("top", (this.y)+"px");
+
+		this.$tank.css('-webkit-transform', 'rotateZ(' + this.baseAngle + 'deg)');
+		this.$tank.css('-moz-transform', 'rotateZ(' + this.baseAngle + 'deg)');
+		this.$tank.css('-o-transform', 'rotateZ(' + this.baseAngle + 'deg)');
+		this.$tank.css('transform', 'rotateZ(' + this.baseAngle + 'deg)');
+
+		var cannonAbsAngle = this.cannonAngle - this.baseAngle;
+		this.$cannon.css('-webkit-transform', 'rotateZ(' + cannonAbsAngle + 'deg)');
+		this.$cannon.css('-moz-transform', 'rotateZ(' + cannonAbsAngle + 'deg)');
+		this.$cannon.css('-o-transform', 'rotateZ(' + cannonAbsAngle + 'deg)');
+		this.$cannon.css('transform', 'rotateZ(' + cannonAbsAngle + 'deg)');
+
+		// info will display the name 
+		this.$info.css('left', (this.x) + 'px');
+		this.$info.css('top', (this.y) + 'px');
+		
 	},
 
 	setCannonAngle: function(){
@@ -157,6 +196,7 @@ Tank.prototype = {
 		var deltaY = this.my - tank.y;
 		this.cannonAngle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
 		this.cannonAngle += 90;
+	
 	},
 
 	setControls: function(){
