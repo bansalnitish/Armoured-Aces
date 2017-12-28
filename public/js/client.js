@@ -2,6 +2,9 @@ var socket = io();
 var game = new Game();
 var tankType = 1;
 var tankName = "";
+var speed = 5;
+var WIDTH = 900;
+var HEIGHT = 500;
 
 function Game(){
 
@@ -188,6 +191,35 @@ Tank.prototype = {
 		this.$info.css('left', (this.x) + 'px');
 		this.$info.css('top', (this.y) + 'px');
 		
+	},
+
+	move: function(){
+
+		 var X = 0;
+		 var Y = 0;
+
+		 if(this.dir.up)
+		 	Y = -1;
+		 
+		 else if(this.dir.down)
+		 	Y = 1;
+		 
+		 else if(this.dir.right)
+		 	X = 1;
+		 
+		 else if(this.dir.left)
+		 	X = -1;
+
+		 X = speed * X;
+		 Y = speed * Y;
+
+		 if(this.x + X < WIDTH && this.x + X > 0)
+		 	this.x += X;
+		 if(this.y + Y < HEIGHT && this.y + Y > 0)
+		 	this.y += Y;
+
+		 this.setCannonAngle();
+
 	},
 
 	setCannonAngle: function(){
