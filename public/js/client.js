@@ -99,7 +99,11 @@ Game.prototype.syncPositions = function(data){
 	data.balls.forEach(function(t){
 
 		var s = new Ball(t, this.$arena);
-		
+		s.explode = t.explode;
+		if(s.explode)
+		{
+			s.explode();
+		}
 	})
 
 
@@ -121,6 +125,19 @@ Ball.prototype.setBall = function(){
 		$("#" + ball.id).css("left", this.x +"px");
 		$("#"+ball.id).css("top",this.y +"px");
 }
+
+Ball.prototype.explode = function(){
+		
+		this.$arena.append('<div id="expl' + this.id + '" class="ball-explosion" style="left:' + this.x + 'px"></div>');
+		var $expl = $('#expl' + this.id);
+		$expl.css('left', this.x + 'px');
+		$expl.css('top', this.y + 'px');
+		
+		setTimeout( function(){
+			$expl.remove();
+		}, 1000);
+}
+
 
 function Tank(tank, arena, game){
 

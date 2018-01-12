@@ -19,6 +19,23 @@ body{
 	position: relative;
 }
 
+.tank-selection{
+	display: inline-block;
+	width: 350px;
+	padding: 0;
+	list-style-type: none;
+	margin: 20px auto 0 auto;
+}
+
+.label{
+	font-size: 12px;
+	text-align: center;
+	width: 100px;
+	color: #5e5e5e;
+	margin: 0 auto;
+	display: inline-block;
+}
+
 .tank-select label{
 	display: inline-block;
 	margin: 10px 0;
@@ -88,6 +105,19 @@ body{
 	width: 100px;
 	height: 120px;
 	z-index: 99;
+}
+
+.ball-explosion{
+	width: 50px;
+	height: 50px;
+	background-color: #FCD700;
+	opacity: 0;
+	margin-left: -25px;
+	margin-top: -25px;
+	-webkit-border-radius: 25px;
+	    moz-border-radius: 25px;
+		 -o-border-radius: 25px;
+			border-radius: 25px;
 }
 
 .tank1{

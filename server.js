@@ -55,7 +55,10 @@ GameArena.prototype.syncBall = function(){
 		this.detectCollison(t);
 
 		if(t.x <= 0 || t.x >= WIDTH || t.y <= 0 || t.y >= HEIGHT)
-			t.dead = true;
+			{
+				t.dead = true;
+				t.explode = true;
+			}
 	})
 }
 
@@ -65,6 +68,8 @@ GameArena.prototype.detectCollison = function(ball){
 		if(Math.abs(t.x - ball.x) < 15 && Math.abs(t.y - ball.y) < 15)
 		{
 			ball.dead = true;
+			t.health -= 5;
+			ball.explode = true;
 		}
 		else
 			ball.keepMoving();
@@ -129,6 +134,7 @@ function Ball(angle, x, y){
 	this.x = x;
 	this.y = y;
 	this.dead = false;
+	this.explode = false;
 
 }
 
