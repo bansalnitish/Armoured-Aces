@@ -167,8 +167,12 @@ Tank.prototype = {
 		this.$arena.append('<div id ="info-' + this.id + '"class = "info"></div>');
 		this.$info = $("#info-" + this.id);
 		this.$info.append('<div id ="label">' + this.name + '</div>');
-
+		this.$info.append('<div class="health-bar"></div>')
 		this.refresh();
+
+		if(this.islocal){
+			this.setControls();
+		}
 
 	},
 
@@ -191,6 +195,9 @@ Tank.prototype = {
 		this.$info.css('left', (this.x) + 'px');
 		this.$info.css('top', (this.y) + 'px');
 		
+		// show health line = heath in px
+		this.$info.find(".health-bar").css("left", (this.x) + "px");
+		this.$info.find("health-bar").css("top", (this.x) + "px");
 	},
 
 	move: function(){
