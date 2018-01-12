@@ -1,0 +1,106 @@
+body{
+	
+	background-image: url(../img/background.jpg);
+	/* Full height */
+    height: 100%; 
+    width:100%;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 0;
+}
+
+.arena{
+	margin: 10px auto;
+	background-image: url(../img/arena.jpg);
+	background-position: center;
+    background-repeat: no-repeat;
+	position: relative;
+}
+
+.tank-select label{
+	display: inline-block;
+	margin: 10px 0;
+	width: 100%;
+	text-align: center;
+}
+
+.tank-selection li{
+	display: inline-block;
+	float: left;
+	width: 33%;
+	text-align: center;
+	cursor: pointer;
+	border: 2px solid #eee;
+	padding: 10px 0;
+}
+
+.tank-selection li.selected{
+	border: 2px solid #158cba;
+	-webkit-border-radius: 5px;
+	   -moz-border-radius: 5px;
+		 -o-border-radius: 5px;
+			border-radius: 5px;
+	border-radius: 5px;
+}
+
+.info{
+	width: 100px;
+	height: 40px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin-top: -85px;
+	margin-left: -50px;
+	opacity: .8;
+}
+
+.health-bar{
+	width: 100px;
+	height: 4px;
+	background-color: #7DD12C;
+	margin: 0 auto;
+}
+
+.tank-canon{
+	
+	background-image: url(../img/tank-canon.png);
+	height: 60px;
+	width: 20px;
+	top:-10px;
+
+}
+
+.balls{
+	position: absolute;
+	background-color: black;
+	height: 10px;
+	width: 10px;
+	-webkit-border-radius: 5px;
+	   -moz-border-radius: 5px;
+		 -o-border-radius: 5px;
+			border-radius: 5px;
+}
+
+.explosion{
+	position: absolute;
+	width: 100px;
+	height: 120px;
+	z-index: 99;
+}
+
+.tank1{
+
+	background-image: url(../img/tank-1-base.png);
+}
+
+.tank2{
+
+	background-image: url(../img/tank-2-base.png);
+}
+
+.tank3{
+
+	background-image: url(../img/tank-3-base.png);
+}

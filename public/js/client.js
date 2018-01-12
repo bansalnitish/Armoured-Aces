@@ -117,7 +117,7 @@ function Ball(ball, $arena){
 
 Ball.prototype.setBall = function(){
 
-		this.$arena.append('<div id = "'+ball.id+'"> </div>');
+		this.$arena.append('<div id = "'+ ball.id +'" class = "' + balls +'"> </div>');
 		$("#" + ball.id).css("left", this.x +"px");
 		$("#"+ball.id).css("top",this.y +"px");
 }
