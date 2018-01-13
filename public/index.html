@@ -6,12 +6,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./css/style.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>  
 
 <body>
-  <div id ="startPage">
+  <div id="prompt" class="name-prompt">
     <h1> Armoured Aces </h1>
     <div class="input-group">
         <input id="tank-name" type="text" class="form-control" placeholder="Name your tank" autocomplete="off">
@@ -37,6 +38,9 @@
 
   <div id="arena" class="arena">
   </div>
+
+  <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+  <script src = "js/client.js"    type="text/javascript"></script>
 
 </body>
 </html>

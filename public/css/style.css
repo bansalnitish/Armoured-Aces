@@ -13,13 +13,38 @@ body{
 
 .arena{
 	margin: 10px auto;
+	top: 100px;
 	background-image: url(../img/arena.jpg);
 	background-position: center;
     background-repeat: no-repeat;
 	position: relative;
+	width: 1100px;
+	height: 700px;
+}
+
+.name-prompt{
+	position: absolute;
+	top: 250px;
+	left: 50%;
+	margin-left: -200px;
+	width: 400px;
+	background-color: #eee;
+	z-index: 2;
+	padding: 10px;
+}
+
+.h1{
+	text-align: center;
+}
+
+.tank{
+	position: absolute;
+	background-repeat: no-repeat;
+	background-position: -10px 0;
 }
 
 .tank-selection{
+	position: centre;
 	display: inline-block;
 	width: 350px;
 	padding: 0;
@@ -80,13 +105,17 @@ body{
 	margin: 0 auto;
 }
 
-.tank-canon{
-	
-	background-image: url(../img/tank-canon.png);
-	height: 60px;
-	width: 20px;
-	top:-10px;
-
+.tank-cannon{
+	position: absolute;
+	top: -25px;
+	width: 60px;
+	height: 80px;
+	background-image: url(../img/tank-cannon.png);
+	background-position: -10px 0;
+	-webkit-transform-origin: 30px 65px;
+	   -moz-transform-origin: 30px 65px;
+		 -o-transform-origin: 30px 65px;
+			transform-origin: 30px 65px;
 }
 
 .balls{

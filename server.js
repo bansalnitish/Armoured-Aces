@@ -1,18 +1,19 @@
-const express = require("express");
-const app = express();
-app.use(express.static("public"))
-var http = require("http").Server(app);
-var io = require("socket.io")(http);
+var express = require('express'),
+http = require('http');
+var app = express();
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
+var router = express.Router();
 
-var health = 100;
-var WIDTH = 900;
-var HEIGHT = 900;
+server.listen(3000);
+
+var InitialHealth = 100;
+var WIDTH = 1100;
+var HEIGHT = 700;
 var firstBall = 1;
 var firstTank = 1;
-
-app.listen(4000, function(){
-	console.log("Server started at port 4000");
-})
+var ballSpeed = 5;
+app.use(express.static(__dirname + '/public'));
 
 app.get("/", function(req, res){
 	res.sendFile(__dirname + '/public/index.html');
@@ -34,7 +35,7 @@ GameArena.prototype.addball = function(ball){
 GameArena.prototype.removetank = function(tank){
 	this.tanks = this.tanks.filter(function(t){
 		return t!=tankID;
-	})
+	});
 }
 
 GameArena.prototype.synctank = function(tank){
@@ -46,20 +47,21 @@ GameArena.prototype.synctank = function(tank){
 			t.canonAngle = tank.canonAngle;
 			t.baseAngle = tank.baseAngle;
 		}
-	})
+	});
 }
 // balls are handled by server only so no data is recieved from the client except the shoot
 GameArena.prototype.syncBall = function(){
+	var self = this;
 	this.balls.forEach(function(t){
 		// if there is collision 
-		this.detectCollison(t);
+		self.detectCollison(t);
 
 		if(t.x <= 0 || t.x >= WIDTH || t.y <= 0 || t.y >= HEIGHT)
 			{
 				t.dead = true;
 				t.explode = true;
 			}
-	})
+	});
 }
 
 GameArena.prototype.detectCollison = function(ball){
@@ -95,22 +97,24 @@ GameArena.prototype.removeDeadBall = function(){
 
 var game = new GameArena();
 
-io.on("connection", function(){
+io.on("connection", function(socket){
 	console.log("user connected");
 	socket.on("newTank", function(tank){
 
-	var startX = randomInteger(40,500);
-	var startY = randomInteger(40,500);
+	var startX = randomInteger(40,1100);
+	var startY = randomInteger(40,700);
 	var tankID = getTankID();
 
-	socket.emit("addTank", {id: tankID, name: tank.name, islocal: true, type: tank.type, x: startX, y: startY, health: IntialHealth})
-	socket.broadcast.emit("addTank", {id: tankID, name: tank.name, islocal: false, type: tank.type, x: startX, y: startY, health: IntialHealth})
+	console.log("value of startX and startY is" + startX + "" + startY);
+	socket.emit("addTank", {id: tankID, name: tank.name, isLocal: true, type: tank.type, x: startX, y: startY, health: InitialHealth})
+	socket.broadcast.emit("addTank", {id: tankID, name: tank.name, isLocal: false, type: tank.type, x: startX, y: startY, health: InitialHealth})
 
 	game.addtank({id: tankID, name: tank.name, type: tank.type});
 
 	})
 
 	socket.on("sync", function(tank){
+		//console.log("sync");
 		game.synctank(tank);
 		game.syncBall();
 		game.removeDeadBall();
@@ -122,6 +126,7 @@ io.on("connection", function(){
 	})
 
 	socket.on("shoot",function(ball){
+		console.log("Shooted");
 		var ball = new Ball(ball.angle, ball.x, ball.y);
 		game.addball(ball);
 	})

@@ -1,10 +1,10 @@
-var socket = io();
+var socket = io.connect('0.0.0.0:3000');
 var game = new Game();
 var tankType = 1;
 var tankName = "";
 var speed = 5;
-var WIDTH = 900;
-var HEIGHT = 500;
+var WIDTH = 1100;
+var HEIGHT = 700;
 
 function Game(){
 
@@ -12,14 +12,21 @@ function Game(){
 	this.$arena = $("#arena");
 	this.socket = socket;
 
+	var g = this;
+	
+	setInterval(function(){
+		g.loop();
+	}, 50);
+
 }
 
 Game.prototype.addTank = function(tank){
 	
+	console.log("added tank" + tank.x +""+tank.name);
 	var tank = new Tank(tank, this.$arena, this);
 	
 	if(tank.isLocal)
-		this.localTank = tank;
+		this.LocalTank = tank;
 	
 	else
 		this.tanks.push(tank);
@@ -27,24 +34,27 @@ Game.prototype.addTank = function(tank){
 
 Game.prototype.loop = function(){
 
-	if(this.localTank != undefined)
+	if(this.LocalTank != undefined)
 	{
 		var sendData = {
-			id : this.localTank.id,
-			x : this.localTank.x,
-			y : this.localTank.y,
-			canonAngle : this.localTank.canonAngle,
-			baseAngle : this.localTank.baseAngle
+			id : this.LocalTank.id,
+			x : this.LocalTank.x,
+			y : this.LocalTank.y,
+			cannonAngle : this.LocalTank.cannonAngle,
+			baseAngle : this.LocalTank.baseAngle
 		};
-
+	//	console.log("sync");
 		socket.emit("sync", sendData);
 
-		this.localTank.keepMoving();
+		this.LocalTank.move();
 	}
 
 }
 
 Game.prototype.killTank = function(tank){
+
+		tank.dead = true;
+		this.removeTank(tank.id);
 
 		this.$arena.append('<img src = "./images/explosion.gif"> id ="explode '+tank.id+'"');
 		$("#explode" + tank.id).css("left", tank.x + "px");
@@ -55,50 +65,60 @@ Game.prototype.killTank = function(tank){
 		}, 1000); // show the tank burning for 1 second
 
 }
+
+Game.prototype.removeTank = function(tankId){
+		//Remove tank object
+		this.tanks = this.tanks.filter( function(t){return t.id != tankId} );
+		//remove tank from dom
+		$('#' + tankId).remove();
+		$('#info-' + tankId).remove();
+}
+
 Game.prototype.syncPositions = function(data){
 
+	var game = this;
 	data.tanks.forEach(function(t){
 		
-		if(t.id == this.localTank.id && this.localTank != undefined){
-			this.localTank.health = t.health;
+		if(t.id == game.LocalTank.id && game.LocalTank != undefined){
+			game.LocalTank.health = t.health;
 			
-			if(this.localTank.health <= 0){
-				game.killTank(this.localTank);
+			if(game.LocalTank.health <= 0){
+				game.killTank(game.LocalTank);
 			}
 
 		}
 
 		var bool = false;
 
-	this.tanks.forEach(function(s){
+	game.tanks.forEach(function(s){
 		
 		if(s.id == t.id){
 			s.x = t.x;
 			s.y = t.y;
 			s.baseAngle = t.baseAngle;
-			s.canonAngle = t.canonAngle;
+			s.cannonAngle = t.cannonAngle;
 			s.health = t.health;
 
 			if(s.health <= 0)
 				game.killTank(s);
 
 			bool = true;
-			s.setTank();
+			s.refresh();
 
 		}
 	});
 
-	if(!bool && (t.id != this.localTank.id)){
+	if(!bool && (t.id != game.LocalTank.id)){
 			game.addTank(s);
 	}
 
 	});
 
-	this.$arena.find(".balls").remove();
+	game.$arena.find(".balls").remove();
 
 	data.balls.forEach(function(t){
 
-		var s = new Ball(t, this.$arena);
+		var s = new Ball(t, game.$arena);
 		s.explode = t.explode;
 		if(s.explode)
 		{
@@ -121,9 +141,9 @@ function Ball(ball, $arena){
 
 Ball.prototype.setBall = function(){
 
-		this.$arena.append('<div id = "'+ ball.id +'" class = "' + balls +'"> </div>');
-		$("#" + ball.id).css("left", this.x +"px");
-		$("#"+ball.id).css("top",this.y +"px");
+		this.$arena.append('<div id="' + this.id + '" class="balls" style="left:' + this.x + 'px"></div>');
+		$("#" + this.id).css("left", this.x +"px");
+		$("#"+ this.id).css("top",this.y +"px");
 }
 
 Ball.prototype.explode = function(){
@@ -132,7 +152,7 @@ Ball.prototype.explode = function(){
 		var $expl = $('#expl' + this.id);
 		$expl.css('left', this.x + 'px');
 		$expl.css('top', this.y + 'px');
-		
+
 		setTimeout( function(){
 			$expl.remove();
 		}, 1000);
@@ -146,10 +166,10 @@ function Tank(tank, arena, game){
 	this.type = tank.type;
 	this.x = tank.x;
 	this.y = tank.y;
-	this.canonAngle = 0;
+	this.cannonAngle = 0;
 	this.$arena = arena;
 	this.game = game;
-	this.isLocal = tank..isLocal;
+	this.isLocal = tank.isLocal;
 	this.dead = false;
 	this.health = tank.health;
 	this.mx = null;
@@ -162,19 +182,22 @@ function Tank(tank, arena, game){
 		down : false,
 	};
 	
-	this.intialise();
+	this.initialise();
+
+	console.log(this.x);
+	console.log(this.isLocal);
 }
 
 Tank.prototype = {
 
-	intialise: function(){
+	initialise: function(){
 		this.$arena.append('<div id ="' + this.id + '" class = "tank tank'+this.id+'"></div>');
 		this.$tank = $("#" + this.id);
-		this.$tank.css("height", 60);
+		this.$tank.css("height", 90);
 		this.$tank.css("width", 60);
 
-		this.$tank.append('<div id = "canon-' + this.id + '"class = "tank-canon"></div>');
-		this.$canon = $("#cannon-" + this.id);
+		this.$tank.append('<div id = "cannon-' + this.id + '"class = "tank-cannon"></div>');
+		this.$cannon = $("#cannon-" + this.id);
 
 		this.$tank.css('-webkit-transform', 'rotateZ(' + this.baseAngle + 'deg)');
 		this.$tank.css('-moz-transform', 'rotateZ(' + this.baseAngle + 'deg)');
@@ -187,15 +210,16 @@ Tank.prototype = {
 		this.$info.append('<div class="health-bar"></div>')
 		this.refresh();
 
-		if(this.islocal){
+		if(this.isLocal){
+			console.log(this.isLocal);
 			this.setControls();
 		}
 
 	},
 
 	refresh: function(){
-		this.$tank.css("left", (this.x)+"px");
-		this.$tank.css("top", (this.y)+"px");
+		this.$tank.css("left", (this.x-30)+"px");
+		this.$tank.css("top", (this.y-40)+"px");
 
 		this.$tank.css('-webkit-transform', 'rotateZ(' + this.baseAngle + 'deg)');
 		this.$tank.css('-moz-transform', 'rotateZ(' + this.baseAngle + 'deg)');
@@ -213,11 +237,14 @@ Tank.prototype = {
 		this.$info.css('top', (this.y) + 'px');
 		
 		// show health line = heath in px
-		this.$info.find(".health-bar").css("left", (this.x) + "px");
-		this.$info.find("health-bar").css("top", (this.x) + "px");
+		this.$info.find(".health-bar").css("width", (this.heath) + "px");
 	},
 
 	move: function(){
+
+		if(this.dead){
+			return;
+		}
 
 		 var X = 0;
 		 var Y = 0;
@@ -243,6 +270,7 @@ Tank.prototype = {
 		 	this.y += Y;
 
 		 this.setCannonAngle();
+		 this.refresh();
 
 	},
 
@@ -257,7 +285,7 @@ Tank.prototype = {
 
 	setControls: function(){
 		var t = this;
-
+		console.log("In the set controls");
 		/* Detect both keypress and keyup to allow multiple keys
 		 and combined directions */
 		$(document).keypress( function(e){
@@ -307,10 +335,10 @@ Tank.prototype = {
 		if(this.dead){
 			return;
 		}
-
+		console.log("In the shoot function");
 		//Emit ball to server
 		var serverBall = {};
-		//Just for local balls who have owner
+		//Just for Local balls who have owner
 		serverBall.alpha = this.cannonAngle * Math.PI / 180; //angle of shot in radians
 		//Set init position
 		var cannonLength = 60;
@@ -345,19 +373,27 @@ $(document).ready(function(){
 socket.on("addTank",function(tank){
 		
 		game.addTank(tank);
-})
+});
 
 
 socket.on("sync",function(data){
 
 		game.syncPositions(data);
-})
+});
+
+socket.on('killTank', function(tankData){
+	game.killTank(tankData);
+});
+
+socket.on('removeTank', function(tankId){
+	game.removeTank(tankId);
+});
 
 
 function addToGame(tankName, tankType){
 	
-	if(tankName != "")
-		$("#startPage").hide();
-	
-	socket.emit("newTank",{name : tankName, type : tankType});
+	if(tankName != ""){
+		$('#prompt').hide();
+	    socket.emit("newTank",{name : tankName, type : tankType});
+	}
 }
